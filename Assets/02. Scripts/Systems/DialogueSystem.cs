@@ -47,11 +47,12 @@ public class DialogueSystem : MonoBehaviour
             return;
         }
 
-        string text = DialogueSelector.Select(database, mostActiveBall);
+        var (text, displayName) = DialogueSelector.Select(database, mostActiveBall);
         if (!string.IsNullOrEmpty(text))
         {
+            string shownName = string.IsNullOrEmpty(displayName) ? mostActiveBall.MemoryName : displayName;
             _skipRequested = false;
-            DialogueUI.Instance.Show(mostActiveBall.MemoryName, text, mostActiveBall.WaveStartEmotionType);
+            DialogueUI.Instance.Show(shownName, text, mostActiveBall.WaveStartEmotionType);
 
             if (highlightCoroutine != null) StopCoroutine(highlightCoroutine);
             highlightCoroutine = StartCoroutine(ZoomOnBall(mostActiveBall));

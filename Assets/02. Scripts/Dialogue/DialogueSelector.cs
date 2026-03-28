@@ -12,10 +12,11 @@ public static class DialogueSelector
     /// 1순위: 공의 감정과 일치하는 그룹에서 나이 조건 만족 + 미출력 대사
     /// 2순위: Any 그룹에서 나이 조건 만족 + 미출력 대사
     /// 3순위: Any 그룹 전체에서 미출력 대사 (나이 무시)
+    /// 반환: (text, displayName) — displayName은 nameOverride가 있으면 그 값, 없으면 null
     /// </summary>
-    public static string Select(DialogueDatabase db, BilliardBall ball)
+    public static (string text, string displayName) Select(DialogueDatabase db, BilliardBall ball)
     {
-        if (db == null) return string.Empty;
+        if (db == null) return (string.Empty, null);
 
         ColorType emotion = ball.WaveStartEmotionType;
         int       age     = ball.MemoryAge;
@@ -24,23 +25,23 @@ public static class DialogueSelector
         var emotionGroup = db.groups.FirstOrDefault(g => g.emotion == emotion);
         if (emotionGroup != null && emotionGroup.lines.Count > 0)
         {
-            string result = PickUnshown(emotionGroup.lines, age, emotion);
-            if (!string.IsNullOrEmpty(result)) return result;
+            var result = PickUnshown(emotionGroup.lines, age, emotion);
+            if (!string.IsNullOrEmpty(result.text)) return result;
         }
 
         // Any(기본) 그룹 — 나이 조건 있는 것 우선
         var defaultGroup = db.groups.FirstOrDefault(g => g.emotion == ColorType.Any);
         if (defaultGroup != null && defaultGroup.lines.Count > 0)
         {
-            string result = PickUnshown(defaultGroup.lines, age, ColorType.Any);
-            if (!string.IsNullOrEmpty(result)) return result;
+            var result = PickUnshown(defaultGroup.lines, age, ColorType.Any);
+            if (!string.IsNullOrEmpty(result.text)) return result;
 
             // 나이 조건 무시하고 미출력 대사
             result = PickUnshown(defaultGroup.lines, -1, ColorType.Any);
-            if (!string.IsNullOrEmpty(result)) return result;
+            if (!string.IsNullOrEmpty(result.text)) return result;
         }
 
-        return string.Empty;
+        return (string.Empty, null);
     }
 
     // 게임 재시작 시 호출
@@ -48,7 +49,7 @@ public static class DialogueSelector
 
     // ── 핵심: 나이 조건 만족 후보 중 아직 안 나온 것에서 뽑기 ──────
     // age == -1 이면 나이 조건 무시
-    private static string PickUnshown(List<DialogueLine> lines, int age, ColorType groupKey)
+    private static (string text, string displayName) PickUnshown(List<DialogueLine> lines, int age, ColorType groupKey)
     {
         // 나이 조건에 맞는 후보 인덱스 수집
         var candidates = new List<int>();
@@ -56,7 +57,7 @@ public static class DialogueSelector
             if (age < 0 || lines[i].MatchesAge(age))
                 candidates.Add(i);
 
-        if (candidates.Count == 0) return string.Empty;
+        if (candidates.Count == 0) return (string.Empty, null);
 
         if (!_usedIndices.TryGetValue(groupKey, out var used))
             _usedIndices[groupKey] = used = new HashSet<int>();
@@ -73,6 +74,7 @@ public static class DialogueSelector
 
         int chosen = unshown[Random.Range(0, unshown.Count)];
         used.Add(chosen);
-        return lines[chosen].text;
+        var line = lines[chosen];
+        return (line.text, string.IsNullOrEmpty(line.nameOverride) ? null : line.nameOverride);
     }
 }

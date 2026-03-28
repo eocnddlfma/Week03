@@ -82,7 +82,7 @@ public class ExchangeSystem : MonoBehaviour
 
     private void MixColors(BilliardBall a, BilliardBall b)
     {
-        if (a.IsEnemy != b.IsEnemy)                          return; // 적-아군 간 색 혼합 없음
+        if (a.IsEnemy || b.IsEnemy)                           return; // 적 관여 시 색 혼합 없음
         if (a.Color.IsWhite() || b.Color.IsWhite())          return; // 흰색 관여 시 색 혼합 없음
         if (a.ColorChangedThisPhase || b.ColorChangedThisPhase) return; // 페이즈당 1회 제한
         if (a.Color.IsSameAs(b.Color))                       return; // 동색: 스탯 성장만

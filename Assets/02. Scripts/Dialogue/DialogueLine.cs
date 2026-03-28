@@ -12,6 +12,9 @@ public class DialogueLine
     [Tooltip("최대 나이 (-1 = 제한 없음)")]
     public int maxAge = -1;
 
+    [Tooltip("대사 표시 시 공 이름 대신 보여줄 이름 (비어있으면 공 기본 이름 사용)")]
+    public string nameOverride;
+
     public bool MatchesAge(int age)
     {
         if (minAge >= 0 && age < minAge) return false;

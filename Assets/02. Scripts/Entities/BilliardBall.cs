@@ -329,6 +329,15 @@ public class BilliardBall : MonoBehaviour
         emotionModifier      = EmotionModifierFactory.Create(emotionColorType);
         spriteRenderer.color = GetEnemySpriteColor();
         ApplySizeToTransform();
+
+        // 어둠 감정이면 "20살 N월의 기억" 이름으로 교체
+        if (emotionColorType == ColorType.Gray   ||
+            emotionColorType == ColorType.Black  ||
+            emotionColorType == ColorType.DeepBlack)
+        {
+            MemoryName = BallMemoryNameGenerator.NextDark();
+            MemoryAge  = 20;
+        }
     }
 
     private static ColorType RandomEnemyEmotionType()

@@ -65,10 +65,13 @@ public class EnemySpawnManager : MonoBehaviour
             Vector2 pos       = FindPosition(boundary.Center, spawnRadius, usedPositions, minDist);
             usedPositions.Add(pos);
 
-            var ball = BallFactory.Instance.CreateEnemyWithStats(RandomPrimaryColor(), pos, stats);
+            // 항상 어둠 색상으로 생성 — RandomPrimaryColor 사용 시 Color 필드가 원색으로 남아 색 혼합 버그 발생
+            ColorType emotionColor = entry.emotionType == EnemyEmotionType.Random
+                ? ToColorType(OverflowEmotionPool[Random.Range(0, OverflowEmotionPool.Length)])
+                : ToColorType(entry.emotionType);
 
-            if (entry.emotionType != EnemyEmotionType.Random)
-                ball.SetEnemyEmotion(ToColorType(entry.emotionType));
+            var ball = BallFactory.Instance.CreateEnemyWithStats(emotionColor, pos, stats);
+            ball.SetEnemyEmotion(emotionColor);
 
             GamePhaseManager.Instance.AddBall(ball);
         }
