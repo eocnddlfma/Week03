@@ -1,0 +1,134 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37fcf1887d88f2d4cb5336c3ce6cca51, type: 3}
+  m_Name: Wave_29
+  m_EditorClassIdentifier: Assembly-CSharp::WaveConfigSO
+  spawnEnemies: 1
+  defaultStats:
+    Size: 1
+    Attack: 10
+    Defense: 10
+    MaxHP: 10
+    Speed: 10
+    Evasion: 10
+    Accuracy: 10
+    Critical: 10
+    Heal: 10
+    AttackMax: 100
+    DefenseMax: 100
+    MaxHPMax: 1000
+    SpeedMax: 100
+    EvasionMax: 500
+    AccuracyMax: 500
+    CriticalMax: 100
+    HealMax: 100
+  enemies:
+  - emotionType: 2
+    useFixedStats: 0
+    stats:
+      Size: 1
+      Attack: 10
+      Defense: 10
+      MaxHP: 10
+      Speed: 10
+      Evasion: 10
+      Accuracy: 10
+      Critical: 10
+      Heal: 10
+      AttackMax: 100
+      DefenseMax: 100
+      MaxHPMax: 1000
+      SpeedMax: 100
+      EvasionMax: 500
+      AccuracyMax: 500
+      CriticalMax: 100
+      HealMax: 100
+  - emotionType: 2
+    useFixedStats: 0
+    stats:
+      Size: 1
+      Attack: 10
+      Defense: 10
+      MaxHP: 10
+      Speed: 10
+      Evasion: 10
+      Accuracy: 10
+      Critical: 10
+      Heal: 10
+      AttackMax: 100
+      DefenseMax: 100
+      MaxHPMax: 1000
+      SpeedMax: 100
+      EvasionMax: 500
+      AccuracyMax: 500
+      CriticalMax: 100
+      HealMax: 100
+  - emotionType: 2
+    useFixedStats: 0
+    stats:
+      Size: 1
+      Attack: 10
+      Defense: 10
+      MaxHP: 10
+      Speed: 10
+      Evasion: 10
+      Accuracy: 10
+      Critical: 10
+      Heal: 10
+      AttackMax: 100
+      DefenseMax: 100
+      MaxHPMax: 1000
+      SpeedMax: 100
+      EvasionMax: 500
+      AccuracyMax: 500
+      CriticalMax: 100
+      HealMax: 100
+  - emotionType: 2
+    useFixedStats: 0
+    stats:
+      Size: 1
+      Attack: 10
+      Defense: 10
+      MaxHP: 10
+      Speed: 10
+      Evasion: 10
+      Accuracy: 10
+      Critical: 10
+      Heal: 10
+      AttackMax: 100
+      DefenseMax: 100
+      MaxHPMax: 1000
+      SpeedMax: 100
+      EvasionMax: 500
+      AccuracyMax: 500
+      CriticalMax: 100
+      HealMax: 100
+  - emotionType: 2
+    useFixedStats: 0
+    stats:
+      Size: 1
+      Attack: 10
+      Defense: 10
+      MaxHP: 10
+      Speed: 10
+      Evasion: 10
+      Accuracy: 10
+      Critical: 10
+      Heal: 10
+      AttackMax: 100
+      DefenseMax: 100
+      MaxHPMax: 1000
+      SpeedMax: 100
+      EvasionMax: 500
+      AccuracyMax: 500
+      CriticalMax: 100
+      HealMax: 100
