@@ -15,10 +15,6 @@ public class EnemySpawnManager : MonoBehaviour
     [Header("스폰 영역")]
     [SerializeField] private PolygonBoundary boundary;
 
-    [Header("스탯 스케일링")]
-    [Tooltip("현재 공 1개당 적의 각 스탯에 더해지는 보너스")]
-    [SerializeField] private float statBonusPerBall = 1f;
-
     [Header("겹침 방지")]
     [SerializeField] private float ballRadius  = 0.5f;
     [SerializeField] private float edgeMargin  = 0.3f;
@@ -46,12 +42,18 @@ public class EnemySpawnManager : MonoBehaviour
     public void SpawnWave(int wave)
     {
         if (boundary == null) boundary = FindAnyObjectByType<PolygonBoundary>();
-        if (waveConfigs.Count == 0) return;
+        
+        // 1. [수정] 설정된 웨이브 설정을 초과하면 즉시 리턴하여 스폰하지 않음
+        if (waveConfigs == null || wave > waveConfigs.Count) 
+        {
+            Debug.Log($"[EnemySpawnManager] 웨이브 {wave}는 설정 범위를 벗어났으므로 적을 생성하지 않습니다.");
+            return;
+        }
 
         var config = GetWaveConfig(wave);
         if (config == null || !config.spawnEnemies) return;
 
-        var   enemies     = GetEnemyList(wave, config);
+        var enemies = GetEnemyList(wave, config);
         float spawnRadius = boundary.Inradius - ballRadius - edgeMargin;
         float minDist     = ballRadius * 2f + 0.1f;
 
@@ -61,7 +63,7 @@ public class EnemySpawnManager : MonoBehaviour
         foreach (var entry in enemies)
         {
             var     baseStats = entry.useFixedStats ? entry.stats : config.defaultStats;
-            var     stats     = ScaleStats(baseStats, ballCount);
+            var     stats     = ScaleStats(baseStats, ballCount, config);
             Vector2 pos       = FindPosition(boundary.Center, spawnRadius, usedPositions, minDist);
             usedPositions.Add(pos);
 
@@ -79,32 +81,29 @@ public class EnemySpawnManager : MonoBehaviour
 
     private WaveConfigSO GetWaveConfig(int wave)
     {
-        int idx = Mathf.Clamp(wave - 1, 0, waveConfigs.Count - 1);
-        return waveConfigs[idx];
+        // 2. [수정] Clamp를 제거하고 정확한 인덱스만 반환
+        int idx = wave - 1;
+        if (idx >= 0 && idx < waveConfigs.Count)
+            return waveConfigs[idx];
+        
+        return null;
     }
 
     private List<EnemyEntry> GetEnemyList(int wave, WaveConfigSO config)
     {
-        int idx = wave - 1;
-        if (idx < waveConfigs.Count) return config.enemies;
-
-        // 설정된 웨이브를 초과하면 마지막 config에 추가 적을 붙임
-        int overflow = idx - (waveConfigs.Count - 1);
-        var list     = new List<EnemyEntry>(config.enemies);
-        for (int i = 0; i < overflow * overflowExtraEnemies; i++)
-            list.Add(new EnemyEntry
-            {
-                emotionType   = OverflowEmotionPool[i % OverflowEmotionPool.Length],
-                useFixedStats = false,
-            });
-        return list;
+        // 3. [수정] Overflow 로직을 완전히 제거
+        // 설정 범위 내라면 config에 정의된 적 리스트만 반환합니다.
+        return config.enemies;
     }
 
-    // 현재 공 수에 비례해 각 스탯에 보너스 추가 (SO 원본 수정 방지를 위해 Clone 사용)
-    private BallStats ScaleStats(BallStats baseStats, int ballCount)
+    // 기준 공 수 초과분에만 보너스 적용 (SO 원본 수정 방지를 위해 Clone 사용)
+    private static BallStats ScaleStats(BallStats baseStats, int ballCount, WaveConfigSO config)
     {
-        var scaled = baseStats.Clone();
-        float bonus = ballCount * statBonusPerBall;
+        var   scaled    = baseStats.Clone();
+        int   excess    = Mathf.Max(0, ballCount - config.bonusMinBallCount);
+        float bonus     = excess * config.statBonusPerBall;
+        if (bonus <= 0f) return scaled;
+
         scaled.Attack   += bonus;
         scaled.Defense  += bonus;
         scaled.MaxHP    += bonus;

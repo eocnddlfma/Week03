@@ -171,9 +171,9 @@ public class UIBuilder : EditorWindow
         var ui   = root.AddComponent<BallCombatStatUI>();
         Undo.RegisterCreatedObjectUndo(root, "Create BallCombatStatUI");
 
-        var atkTmp = CreateWorldTMP("ATKLabel", root.transform, 1.0f, new Color(1f, 0.6f, 0f));
-        var hpTmp  = CreateWorldTMP("HPLabel",  root.transform, 1.0f, Color.green);
-        var defTmp = CreateWorldTMP("DEFLabel", root.transform, 1.0f, new Color(0.4f, 0.8f, 1f));
+        var atkTmp = CreateWorldTMP("ATKLabel", root.transform, 0.55f, new Color(1f, 0.6f, 0f));
+        var hpTmp  = CreateWorldTMP("HPLabel",  root.transform, 0.55f, Color.green);
+        var defTmp = CreateWorldTMP("DEFLabel", root.transform, 0.55f, new Color(0.4f, 0.8f, 1f));
 
         var so = new SerializedObject(ui);
         so.FindProperty("atkLabel").objectReferenceValue = atkTmp;
@@ -231,7 +231,7 @@ public class UIBuilder : EditorWindow
         tmp.fontSize     = fontSize;
         tmp.color        = color;
         tmp.sortingOrder = 10;
-        tmp.rectTransform.sizeDelta = new Vector2(4f, 0.6f);
+        tmp.rectTransform.sizeDelta = new Vector2(2f, 0.4f);
         return tmp;
     }
 }

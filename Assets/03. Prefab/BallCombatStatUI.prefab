@@ -35,7 +35,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 4, y: 0.6}
+  m_SizeDelta: {x: 9, y: 1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!23 &3550696763754298941
 MeshRenderer:
@@ -128,7 +128,7 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: 0
+  m_TextStyleHashCode: -1183493901
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2
@@ -216,7 +216,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 4, y: 0.6}
+  m_SizeDelta: {x: 9, y: 1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!23 &2102227665571907586
 MeshRenderer:
@@ -309,7 +309,7 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: 0
+  m_TextStyleHashCode: -1183493901
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2
@@ -409,12 +409,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 756228b45b245734f8dc369ab805bab1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BallCombatStatUI
-  hpLabelY: 0.55
-  combatLabelY: 0
-  combatLabelX: 0.55
   atkLabel: {fileID: 5283845864355345351}
   hpLabel: {fileID: 1534142221176335681}
   defLabel: {fileID: 1670766346447875108}
+  referenceOrtho: 3
+  baseFontSize: 2
+  spacingMultiplier: 0.52
 --- !u!1 &8285174814124761370
 GameObject:
   m_ObjectHideFlags: 0
@@ -450,7 +450,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 4, y: 0.6}
+  m_SizeDelta: {x: 9, y: 1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!23 &2968057996385058440
 MeshRenderer:
@@ -543,7 +543,7 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: 0
+  m_TextStyleHashCode: -1183493901
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2

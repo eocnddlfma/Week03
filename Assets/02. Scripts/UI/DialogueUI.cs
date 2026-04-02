@@ -108,16 +108,16 @@ public class DialogueUI : MonoBehaviour
 
     private static (Color text, Color bg) EmotionColors(ColorType emotion) => emotion switch
     {
-        ColorType.Red       => (new Color(1f,    0.40f, 0.40f), new Color(0.22f, 0.04f, 0.04f, 0.90f)),
-        ColorType.Blue      => (new Color(0.40f, 0.60f, 1f   ), new Color(0.04f, 0.06f, 0.22f, 0.90f)),
-        ColorType.Green     => (new Color(0.40f, 1f,   0.50f ), new Color(0.04f, 0.18f, 0.06f, 0.90f)),
-        ColorType.Yellow    => (new Color(1f,    0.95f, 0.30f), new Color(0.20f, 0.16f, 0.02f, 0.90f)),
-        ColorType.Cyan      => (new Color(0.30f, 0.95f, 1f   ), new Color(0.02f, 0.16f, 0.20f, 0.90f)),
-        ColorType.Magenta   => (new Color(1f,    0.40f, 0.95f), new Color(0.18f, 0.02f, 0.18f, 0.90f)),
-        ColorType.White     => (new Color(0.90f, 0.90f, 0.90f), new Color(0.10f, 0.10f, 0.12f, 0.90f)),
-        ColorType.Gray      => (new Color(0.72f, 0.72f, 0.72f), new Color(0.06f, 0.06f, 0.06f, 0.92f)),
-        ColorType.Black     => (new Color(0.78f, 0.78f, 0.85f), new Color(0.03f, 0.03f, 0.06f, 0.94f)),
-        ColorType.DeepBlack => (new Color(0.70f, 0.50f, 0.90f), new Color(0.02f, 0.00f, 0.06f, 0.96f)),
-        _                   => (Color.white,                     new Color(0f,    0f,    0f,    0.82f)),
+        ColorType.Red       => (new Color(1f,    0.40f, 0.40f), new Color(0.22f, 0.04f, 0.04f, 0.95f)),
+        ColorType.Blue      => (new Color(0.40f, 0.60f, 1f   ), new Color(0.04f, 0.06f, 0.22f, 0.95f)),
+        ColorType.Green     => (new Color(0.40f, 1f,   0.50f ), new Color(0.04f, 0.18f, 0.06f, 0.95f)),
+        ColorType.Yellow    => (new Color(1f,    0.95f, 0.30f), new Color(0.20f, 0.16f, 0.02f, 0.95f)),
+        ColorType.Cyan      => (new Color(0.30f, 0.95f, 1f   ), new Color(0.02f, 0.16f, 0.20f, 0.95f)),
+        ColorType.Magenta   => (new Color(1f,    0.40f, 0.95f), new Color(0.18f, 0.02f, 0.18f, 0.95f)),
+        ColorType.White     => (new Color(0.90f, 0.90f, 0.90f), new Color(0.10f, 0.10f, 0.12f, 0.95f)),
+        ColorType.Gray      => (new Color(0.72f, 0.72f, 0.72f), new Color(0.06f, 0.06f, 0.06f, 1f)),
+        ColorType.Black     => (new Color(0.78f, 0.78f, 0.85f), new Color(0.03f, 0.03f, 0.06f, 1f)),
+        ColorType.DeepBlack => (new Color(0.70f, 0.50f, 0.90f), new Color(0.02f, 0.00f, 0.06f, 1f)),
+        _                   => (Color.white,                     new Color(0f,    0f,    0f,    0.95f)),
     };
 }

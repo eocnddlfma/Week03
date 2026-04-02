@@ -7,6 +7,9 @@ public class DialogueGroup
     [Tooltip("Any = 기본 대사 (감정 조건 없음)")]
     public ColorType emotion = ColorType.Any;
 
+    [Tooltip("이 감정 그룹의 고정 나이. -1이면 공의 이름 그대로 표시")]
+    public int fixedAge = -1;
+
     public List<DialogueLine> lines = new List<DialogueLine>();
 }
 

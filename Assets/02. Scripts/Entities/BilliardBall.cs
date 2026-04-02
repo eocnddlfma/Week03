@@ -20,24 +20,30 @@ public class BilliardBall : MonoBehaviour
     public bool        IsEnemy       { get; private set; }
     public ColorType   WaveStartEmotionType  { get; private set; } = ColorType.Any; // 웨이브 시작 시 감정
     public bool        ColorChangedThisPhase { get; private set; }                  // 이 페이즈에 색 변화 여부
+    public ColorState? PendingColor          { get; private set; }                  // 대사 이후 적용될 예약 색상
 
     public Rigidbody2D Rigidbody { get; private set; }
 
     private SpriteRenderer  spriteRenderer;
     private IEmotionModifier emotionModifier;
-    private IAttackBehavior  attackBehavior;
 
     [Header("크기 설정")]
-    [SerializeField] private float statSizeMin    = 0.5f;  // 스탯 합산 최저일 때 크기
-    [SerializeField] private float statSizeMax    = 10.0f; // 스탯 합산 최고일 때 크기
-    [SerializeField] private float statSizeRefMax = 240f;  // 크기 최대치 기준 스탯 합산 (8스탯 × 30)
+    [SerializeField] private float statSizeMin = 1.0f;  // 스폰 시 기본 크기
+    [SerializeField] private float statSizeMax = 10.0f; // 최대 크기
+    [SerializeField] private AnimationCurve sizeGrowthCurve; // 크기 증가 곡선
+
+    // 스탯 최댓값 총합 (BallStats 상수 기준, 자동 계산)
+    private static readonly float StatTotalMax =
+        BallStats.AttackMax + BallStats.DefenseMax + BallStats.MaxHPMax +
+        BallStats.SpeedMax  + BallStats.EvasionMax  + BallStats.AccuracyMax +
+        BallStats.CriticalMax + BallStats.HealMax;
 
     [Header("물리 설정")]
-    [SerializeField] private float stopThreshold      = 0.3f;  // 이 속도 이하면 즉시 정지
-    [SerializeField] private float isMovingThreshold  = 0.01f; // IsMoving 판정 기준
-    [SerializeField] private float dampingAtLowSpeed  = 0.25f; // Speed 최저 시 linearDamping
-    [SerializeField] private float dampingAtMidSpeed  = 0.1f;  // Speed 중간 시 linearDamping
-    [SerializeField] private float dampingAtHighSpeed = 0.01f; // Speed 최고 시 linearDamping
+    private const float stopThreshold     = 0.3f;  // 이 속도 이하면 즉시 정지
+    private const float isMovingThreshold = 0.01f; // IsMoving 판정 기준
+    private const float dampingAtLowSpeed  = 1.0f;  // Speed 최저 시 linearDamping
+    private const float dampingAtMidSpeed  = 0.6f;  // Speed 중간 시 linearDamping
+    private const float dampingAtHighSpeed = 0.2f;  // Speed 최고 시 linearDamping
     [SerializeField] private float replicateOffset    = 0.5f;  // 분열 시 좌우 간격
 
     [Header("열정 설정")]
@@ -47,13 +53,13 @@ public class BilliardBall : MonoBehaviour
     [SerializeField] private float minorPassionMultiplier  = 2f;
     [SerializeField] private float majorPassionMultiplier  = 5f;
 
-[Header("UI 프리팹")]
+    [Header("UI 프리팹")]
     [SerializeField] private BallCombatStatUI statUIPrefab;
 
 
     public ColorType EmotionColorType => emotionModifier?.ColorType ?? ColorType.Any;
 
-    public bool  CanReceiveExchange => !Color.IsWhite();
+    public bool  CanReceiveExchange => true;
     public bool  IsMoving           => Rigidbody.linearVelocity.magnitude > isMovingThreshold;
     public float CurrentHP          => currentHP;
 
@@ -89,27 +95,71 @@ public class BilliardBall : MonoBehaviour
     {
         Id             = nextId++;
         Rigidbody      = GetComponent<Rigidbody2D>();
-        spriteRenderer = GetComponent<SpriteRenderer>();
-        Rigidbody.gravityScale = 0f; // 탑다운 2D - 중력 없음
+        spriteRenderer = GetComponent<SpriteRenderer>(); // <-- 여기서 초기화됩니다.
+        Rigidbody.gravityScale = 0f;
+
+        // 완전 탄성 반사 (마찰 없음) - 인스펙터에서 별도 설정이 없을 때만 적용
+        var col = GetComponent<CircleCollider2D>();
+        if (col.sharedMaterial == null)
+            col.sharedMaterial = new PhysicsMaterial2D("BilliardBall") { bounciness = 1f, friction = 0f };
+    }
+
+    // 버텍스 컬러 + 머테리얼 색상 동시 적용 — 셰이더 방식에 무관하게 색상 반영
+    private void SetSpriteColor(UnityEngine.Color c)
+    {
+        spriteRenderer.color = c;
+        var mat = spriteRenderer.material;
+        if (mat.HasProperty("_OutlineColor"))
+            mat.SetColor("_OutlineColor", c);
+    }
+
+    public void SetMaterial(Material newMaterial)
+    {
+        if (spriteRenderer == null) return;
+        UnityEngine.Color saved = spriteRenderer.color;
+        spriteRenderer.material = newMaterial;
+        SetSpriteColor(saved);
     }
 
     void FixedUpdate()
     {
         // 다른 콜라이더와 접촉 중이면 물리엔진에 맡김 (벽에 붙어 멈추는 현상 방지)
-        if (Rigidbody.linearVelocity.magnitude < stopThreshold && !Rigidbody.IsTouching(ContactFilter2D.noFilter))
+        if (Rigidbody.linearVelocity.magnitude < stopThreshold)
             Rigidbody.linearVelocity = Vector2.zero;
     }
 
-    public void Initialize(ColorState colorState, IAttackBehavior initialBehavior)
+    public void Initialize(ColorState colorState)
     {
-        attackBehavior  = initialBehavior;
-        emotionModifier = EmotionModifierFactory.Create(IsEnemy ? RandomEnemyEmotionType() : colorState.GetColorType());
-        Color           = colorState;
-        OriginalColor   = ExtractPrimaryColor(colorState); // 항상 원색만 기록
-        currentHP       = stats.MaxHP;
-        spriteRenderer.color = IsEnemy ? GetEnemySpriteColor() : colorState.ToUnityColor();
-        MemoryName = BallMemoryNameGenerator.Next();
-        MemoryAge  = int.Parse(MemoryName.Split('살')[0]);
+         ColorType myEmotion = IsEnemy ? RandomEnemyEmotionType() : colorState.GetColorType();
+        emotionModifier = EmotionModifierFactory.Create(myEmotion);
+        
+        Color         = colorState;
+        OriginalColor = ExtractPrimaryColor(colorState);
+        currentHP     = stats.MaxHP;
+        SetSpriteColor(IsEnemy ? GetEnemySpriteColor() : colorState.ToUnityColor());
+
+        if (PlayerData.Instance?.HasTrait(PlayerTrait.SquareBeam) == true)
+        {
+            spriteRenderer.sprite = GetSquareSprite();
+
+            // CircleCollider2D → BoxCollider2D 교체
+            var circle = GetComponent<CircleCollider2D>();
+            var mat    = circle.sharedMaterial;
+            circle.enabled = false;
+
+            var box        = gameObject.AddComponent<BoxCollider2D>();
+            box.size           = Vector2.one;   // 스프라이트 1×1 유닛에 맞춤
+            box.sharedMaterial = mat;
+
+            // 회전 저항 (사각형이 계속 회전하면 어색함)
+            Rigidbody.angularDamping = 1f;
+        }
+        SetMemoryNameByEmotion(myEmotion); // 아래에 새로 만들 함수 호출
+        if (MemoryName.Contains("살"))
+        {
+            MemoryAge = int.Parse(MemoryName.Split('살')[0]);
+        }
+
         ApplySpeedToDamping();
         RefreshSizeFromStats();
         AssignRandomPassions();
@@ -121,7 +171,31 @@ public class BilliardBall : MonoBehaviour
             combatStatUI = Instantiate(statUIPrefab);
         combatStatUI?.Setup(this);
     }
+    private void SetMemoryNameByEmotion(ColorType myColor)
+    {
+        var db = DialogueSystem.Instance?.Database;
+        
+        // 어둠의 감정 (Gray, Black, DeepBlack) 처리
+        if (myColor == ColorType.Gray || myColor == ColorType.Black || myColor == ColorType.DeepBlack)
+        {
+            MemoryName = BallMemoryNameGenerator.NextDark();
+            return;
+        }
 
+        // 일반 감정 DB에서 고정 나이 찾기
+        if (db != null)
+        {
+            var group = db.groups.Find(g => g.emotion == myColor);
+            if (group != null && group.fixedAge != -1)
+            {
+                MemoryName = BallMemoryNameGenerator.GetNameByAge(group.fixedAge);
+                return;
+            }
+        }
+
+        // DB에 없거나 고정 나이가 없는 경우 (Any 등) 기존처럼 랜덤
+        MemoryName = BallMemoryNameGenerator.Next();
+    }
     // Exchange 페이즈 시작 시 호출 - 페이즈 전투 스탯 초기화
     public void InitPhaseStats()
     {
@@ -141,20 +215,19 @@ public class BilliardBall : MonoBehaviour
         float absorbed = Mathf.Min(PhaseDefense, damage);
         PhaseDefense -= absorbed;
         damage       -= absorbed;
-        RefreshUI();
+        RefreshUI(); // 변경된 방어력으로 UI 갱신
         if (damage > 0f) TakeRawDamage(damage);
     }
 
     private void RefreshUI() =>
-        combatStatUI?.Refresh(PhaseAttack, PhaseDefense, currentHP,
-                              GetPassion(StatType.Attack), GetPassion(StatType.Defense));
+        combatStatUI?.Refresh(PhaseAttack, PhaseDefense, currentHP, Stats.MaxHP);
 
     // 페이즈 스탯 기반 데미지 (방어 중복 적용 없음)
     public void TakeRawDamage(float damage)
     {
         if (damage <= 0f) return;
         currentHP -= damage;
-        RefreshUI();
+        RefreshUI(); // 변경된 HP로 UI 갱신
         FloatingStatTextSpawner.Instance?.SpawnText(
             $"-{damage:F0}", UnityEngine.Color.red, Position + Vector2.up * 0.3f);
         if (currentHP <= 0f) OnDeath();
@@ -194,25 +267,38 @@ public class BilliardBall : MonoBehaviour
     // 스탯 합산으로 크기를 계산한 뒤 transform에 반영
     public void RefreshSizeFromStats()
     {
-        stats.Size = Mathf.Lerp(statSizeMin, statSizeMax,
-            Mathf.Clamp01(stats.GetTotalStats() / statSizeRefMax));
+        float t = Mathf.Clamp01(stats.GetTotalStats() / StatTotalMax);
+        
+        // sizeGrowthCurve를 사용하여 t 값을 변환
+        float curvedT = sizeGrowthCurve.Evaluate(t); 
+
+        stats.Size = Mathf.Lerp(statSizeMin, statSizeMax, curvedT); // 변환된 t 값 사용
+
+        // 거대하고 아름다운: 계산된 크기에 1.2배 배율
+        if (!IsEnemy && PlayerData.Instance?.HasTrait(PlayerTrait.BigBeautiful) == true)
+            stats.Size *= 1.2f;
         ApplySizeToTransform();
     }
 
-    // 감정 보정 포함한 크기를 transform 스케일에 반영
+    // stats.Size를 그대로 반영 (감정 배율 미적용 - 스폰 시 크기 1 보장)
     private void ApplySizeToTransform()
     {
-        float s = GetEffectiveStats().Size;
-        transform.localScale = Vector3.one * s;
+        transform.localScale = Vector3.one * stats.Size;
     }
 
     // Speed에 비례해 linearDamping 설정 (Speed 낮을수록 빨리 멈춤)
-    public void ApplySpeedToDamping()
+    public void ApplySpeedToDamping() => Rigidbody.linearDamping = GetBaseDamping();
+
+    // FrictionRampSystem에서 참조
+    public float GetBaseDamping()
     {
-        float t = Mathf.Clamp01(stats.Speed / Mathf.Max(stats.SpeedMax, 1f));
-        Rigidbody.linearDamping = t < 0.5f
+        float t    = Mathf.Clamp01(stats.Speed / Mathf.Max(BallStats.SpeedMax, 1f));
+        float base_ = t < 0.5f
             ? Mathf.Lerp(dampingAtLowSpeed, dampingAtMidSpeed,  t * 2f)
             : Mathf.Lerp(dampingAtMidSpeed,  dampingAtHighSpeed, (t - 0.5f) * 2f);
+        // Smooth 특성: 기본 damping 60% 감소
+        if (PlayerData.Instance?.HasTrait(PlayerTrait.Smooth) == true) base_ *= 0.4f;
+        return base_;
     }
 
     // 혼합색/흰색이 들어와도 활성 채널 중 하나를 뽑아 원색으로 반환
@@ -247,30 +333,35 @@ public class BilliardBall : MonoBehaviour
         }
     }
 
+    // 색 예약 - Exchange 페이즈 중 충돌 시 호출, 실제 적용은 대사 이후
+    public void SetPendingColor(ColorState newColor)
+    {
+        PendingColor          = newColor;
+        ColorChangedThisPhase = true; // 이번 페이즈 추가 변경 차단
+    }
+
+    // 예약된 색상 적용 - 대사 종료 후 GamePhaseManager에서 호출
+    public void ApplyPendingColor()
+    {
+        if (PendingColor == null) return;
+        OnColorChanged(PendingColor.Value);
+        PendingColor = null;
+    }
+
     // 색 변경 - 교류 이후 혼합색으로 전환될 때 호출
     public void OnColorChanged(ColorState newColor)
     {
         ColorChangedThisPhase = true;
         Color                 = newColor;
         emotionModifier = EmotionModifierFactory.Create(IsEnemy ? EmotionColorType : newColor.GetColorType());
-        attackBehavior  = AttackBehaviorFactory.CreateOnColorChange(newColor.GetColorType());
-        spriteRenderer.color = IsEnemy ? GetEnemySpriteColor() : newColor.ToUnityColor();
+        SetSpriteColor(IsEnemy ? GetEnemySpriteColor() : newColor.ToUnityColor());
 
         ApplySizeToTransform();
 
-        // 흰색이 된 턴은 계속 이동, 다음 웨이브 시작 시 정지 (InitAllPhaseStats에서 처리)
-        if (newColor.IsWhite())
-            WaveManager.Instance.RegisterWhiteBall(this);
     }
 
     // 감정 보정이 적용된 실제 전투 스탯
     public BallStats GetEffectiveStats() => emotionModifier.Apply(stats);
-
-    public void ExecuteAttack(System.Collections.Generic.List<BilliardBall> targets)
-    {
-        if (Color.IsWhite()) return;
-        attackBehavior.Execute(this, targets);
-    }
 
     // damage는 CombatCalculator.Calculate()를 거친 최종값 (miss면 0)
     public void TakeDamage(float damage)
@@ -284,59 +375,57 @@ public class BilliardBall : MonoBehaviour
     public void HealHP(float amount)
     {
         if (amount <= 0f) return;
-        currentHP = Mathf.Min(currentHP + amount, stats.MaxHP);
+        float actual = Mathf.Min(currentHP + amount, stats.MaxHP) - currentHP;
+        if (actual <= 0f) return; // 이미 최대체력 — 힐 없음
+        currentHP += actual;
         RefreshUI();
         FloatingStatTextSpawner.Instance?.SpawnText(
-            $"+{amount:F0}", UnityEngine.Color.green, Position + Vector2.up * 0.3f);
+            $"+{actual:F0}", UnityEngine.Color.green, Position + Vector2.up * 0.3f);
     }
+
+    public static event System.Action OnLastDeepBlackDefeated;
 
     private void OnDeath()
     {
+        CollisionLogger.Log(CollisionLogType.Death,
+            $"{MemoryName} 사망", UnityEngine.Color.red);
+
+        // 1. [추가] 적이 죽었음을 즉시 알림 (음악 변경 트리거)
+        if (IsEnemy) 
+        {
+            EnemyPresenceManager.Instance?.OnBallRemoved(this);
+        }
+
         GamePhaseManager.Instance.RemoveBall(this);
-        WaveManager.Instance.OnBallDefeated(this);
+
+        // DeepBlack 관련 로직 (FindObjectsByType은 죽어가는 나 자신을 포함할 수 있음)
+        if (IsEnemy && EmotionColorType == ColorType.DeepBlack)
+        {
+            bool anyLeft = false;
+            foreach (var b in FindObjectsByType<BilliardBall>(FindObjectsSortMode.None))
+            {
+                if (b != this && b.IsEnemy && b.EmotionColorType == ColorType.DeepBlack)
+                { anyLeft = true; break; }
+            }
+            if (!anyLeft) OnLastDeepBlackDefeated?.Invoke();
+        }
+
         Destroy(gameObject);
     }
 
-    // 흰색이 된 지 2웨이브 후 호출 - 원래색 + 무작위색 두 공으로 분열
-    public void Replicate()
-    {
-        var factory = BallFactory.Instance;
-        Vector2 pos = Position;
-
-        BilliardBall ballA, ballB;
-        if (IsEnemy)
-        {
-            ballA = factory.CreateEnemyWithStats(OriginalColor.GetColorType(), pos + Vector2.left  * replicateOffset, stats); // 원본 스탯
-            ballB = factory.CreateEnemy(GetRandomNonWhiteColor(),              pos + Vector2.right * replicateOffset);        // 랜덤 스탯
-        }
-        else
-        {
-            ballA = factory.CreateWithStats(OriginalColor.GetColorType(), pos + Vector2.left  * replicateOffset, stats); // 원본 스탯
-            ballB = factory.Create(GetRandomNonWhiteColor(),              pos + Vector2.right * replicateOffset);        // 랜덤 스탯
-        }
-
-        GamePhaseManager.Instance.AddBall(ballA);
-        GamePhaseManager.Instance.AddBall(ballB);
-        GamePhaseManager.Instance.RemoveBall(this);
-
-        Destroy(gameObject);
-    }
 
 
     // 스폰 후 감정 타입 강제 지정 (EnemySpawnManager에서 호출)
     public void SetEnemyEmotion(ColorType emotionColorType)
     {
         emotionModifier      = EmotionModifierFactory.Create(emotionColorType);
-        spriteRenderer.color = GetEnemySpriteColor();
+        SetSpriteColor(GetEnemySpriteColor());
         ApplySizeToTransform();
 
-        // 어둠 감정이면 "20살 N월의 기억" 이름으로 교체
-        if (emotionColorType == ColorType.Gray   ||
-            emotionColorType == ColorType.Black  ||
-            emotionColorType == ColorType.DeepBlack)
+        SetMemoryNameByEmotion(emotionColorType);
+        if (MemoryName.Contains("살"))
         {
-            MemoryName = BallMemoryNameGenerator.NextDark();
-            MemoryAge  = 20;
+            MemoryAge = int.Parse(MemoryName.Split('살')[0]);
         }
     }
 
@@ -362,7 +451,6 @@ public class BilliardBall : MonoBehaviour
         Color.GetColorType(),
         emotionModifier.EmotionName,
         emotionModifier.Description,
-        attackBehavior.Type,
         stats,
         GetEffectiveStats(),
         currentHP,
@@ -405,4 +493,19 @@ public class BilliardBall : MonoBehaviour
         StatType.Heal     => "힐",
         _                 => "?"
     };
+
+    // ── SquareBeam 특성용 정사각형 스프라이트 ─────────────────────
+    private static Sprite _squareSprite;
+    private static Sprite GetSquareSprite()
+    {
+        if (_squareSprite != null) return _squareSprite;
+        var tex     = new Texture2D(32, 32, TextureFormat.RGBA32, false);
+        var pixels  = new Color32[32 * 32];
+        var white   = new Color32(255, 255, 255, 255);
+        for (int i = 0; i < pixels.Length; i++) pixels[i] = white;
+        tex.SetPixels32(pixels);
+        tex.Apply();
+        _squareSprite = Sprite.Create(tex, new Rect(0, 0, 32, 32), new Vector2(0.5f, 0.5f), 32f);
+        return _squareSprite;
+    }
 }

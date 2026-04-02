@@ -24,7 +24,8 @@ public class CueController : MonoBehaviour
         Instance = this;
 
         mainCamera   = Camera.main;
-        baseMaxForce = maxForce;
+        baseMaxForce = maxForce * (PlayerData.Instance?.Stats.ShootPower ?? 1f);
+        maxForce     = baseMaxForce;
         aimLine      = GetComponent<LineRenderer>();
         aimLine.positionCount = 2;
         aimLine.enabled       = false;
@@ -106,6 +107,7 @@ public class CueController : MonoBehaviour
         Vector2 force = dragVec.normalized * (power * maxForce);
 
         selectedBall.Rigidbody.AddForce(force, ForceMode2D.Impulse);
+        TutorialManager.Notify(TutorialEvent.Shot);
 
         shotUsed = true;
         GamePhaseManager.Instance.OnCueShot();

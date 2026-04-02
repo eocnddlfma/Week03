@@ -26,10 +26,6 @@ public enum StatType
     Evasion, Accuracy, Critical, Heal
 }
 
-public enum AttackType
-{
-    Melee, Ranged, Charge, JumpArea, Orbit, Idle
-}
 
 public enum GamePhase
 {
@@ -112,6 +108,10 @@ public struct ColorState
         ColorType.Cyan    => Cyan,
         ColorType.Magenta => Magenta,
         ColorType.White   => White,
+        // 적 전용 감정 색상 - 시각 색은 SetEnemyEmotion이 덮어쓰므로 내부값은 임의 원색
+        ColorType.Gray      => Red,
+        ColorType.Black     => Blue,
+        ColorType.DeepBlack => Green,
         _ => throw new System.Exception($"알 수 없는 색상 타입: {type}")
     };
 

@@ -3,7 +3,6 @@ public class BallTooltipData
     public ColorType  ColorType        { get; }
     public string     EmotionName      { get; }
     public string     EmotionDesc      { get; }
-    public AttackType AttackType       { get; }
     public BallStats  BaseStats        { get; }
     public BallStats  EffectiveStats   { get; }
     public float      CurrentHP        { get; }
@@ -16,7 +15,6 @@ public class BallTooltipData
         ColorType  colorType,
         string     emotionName,
         string     emotionDesc,
-        AttackType attackType,
         BallStats  baseStats,
         BallStats  effectiveStats,
         float      currentHP,
@@ -28,7 +26,6 @@ public class BallTooltipData
         ColorType      = colorType;
         EmotionName    = emotionName;
         EmotionDesc    = emotionDesc;
-        AttackType     = attackType;
         BaseStats      = baseStats;
         EffectiveStats = effectiveStats;
         CurrentHP      = currentHP;

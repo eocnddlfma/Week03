@@ -33,7 +33,7 @@ Transform:
   m_LocalScale: {x: 0.4, y: 0.4, z: 0.4}
   m_ConstrainProportionsScale: 1
   m_Children:
-  - {fileID: 2734917332797224658}
+  - {fileID: 716102593907336477}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &3108627942870332380
@@ -109,36 +109,47 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BilliardBall
   stats:
     Size: 1
-    Attack: 10
-    Defense: 10
-    MaxHP: 10
-    Speed: 10
-    Range: 10
-    Evasion: 10
-    Accuracy: 10
-    Critical: 10
-    Heal: 10
-    AttackMax: 100
-    DefenseMax: 100
-    MaxHPMax: 1000
-    SpeedMax: 100
-    RangeMax: 100
-    EvasionMax: 500
-    AccuracyMax: 500
-    CriticalMax: 100
-    HealMax: 100
-  stopThreshold: 0.5
-  isMovingThreshold: 0.01
-  dampingAtLowSpeed: 5
-  dampingAtHighSpeed: 0.1
+    Attack: 1
+    Defense: 1
+    MaxHP: 5
+    Speed: 1
+    Evasion: 1
+    Accuracy: 1
+    Critical: 1
+    Heal: 0
+  statSizeMin: 1
+  statSizeMax: 15
+  sizeGrowthCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0.002380371
+      inSlope: 3.1731746
+      outSlope: 3.1731746
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.0375
+    - serializedVersion: 3
+      time: 1
+      value: 1.0019302
+      inSlope: 0.04260432
+      outSlope: 0.04260432
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.2767471
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   replicateOffset: 0.5
-  passionBudgetMin: 2
+  passionBudgetMin: 0
   passionBudgetMax: 12
   majorPassionChance: 0.5
   minorPassionMultiplier: 2
   majorPassionMultiplier: 5
-  collisionDecayRatio: 0.667
-  statUIPrefab: {fileID: 0}
+  statUIPrefab: {fileID: 4900504095553817586}
 --- !u!58 &1291278913759462
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -202,7 +213,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 0
---- !u!1001 &8604321829407142168
+--- !u!1001 &6587862785068720855
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -210,41 +221,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 7066490611514753046}
     m_Modifications:
-    - target: {fileID: 1534142221176335681, guid: 47906c4776163494187bb1d1c74b96b0, type: 3}
-      propertyPath: m_TextStyleHashCode
-      value: -1183493901
-      objectReference: {fileID: 0}
-    - target: {fileID: 1670766346447875108, guid: 47906c4776163494187bb1d1c74b96b0, type: 3}
-      propertyPath: m_TextStyleHashCode
-      value: -1183493901
-      objectReference: {fileID: 0}
-    - target: {fileID: 5283845864355345351, guid: 47906c4776163494187bb1d1c74b96b0, type: 3}
-      propertyPath: m_TextStyleHashCode
-      value: -1183493901
-      objectReference: {fileID: 0}
     - target: {fileID: 5607119640578069963, guid: 47906c4776163494187bb1d1c74b96b0, type: 3}
       propertyPath: m_Name
       value: BallCombatStatUI
       objectReference: {fileID: 0}
     - target: {fileID: 5952863495834585034, guid: 47906c4776163494187bb1d1c74b96b0, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 2.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 5952863495834585034, guid: 47906c4776163494187bb1d1c74b96b0, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 2.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 5952863495834585034, guid: 47906c4776163494187bb1d1c74b96b0, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 2.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 5952863495834585034, guid: 47906c4776163494187bb1d1c74b96b0, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.6869999
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5952863495834585034, guid: 47906c4776163494187bb1d1c74b96b0, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.406475
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5952863495834585034, guid: 47906c4776163494187bb1d1c74b96b0, type: 3}
       propertyPath: m_LocalPosition.z
@@ -256,15 +243,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5952863495834585034, guid: 47906c4776163494187bb1d1c74b96b0, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5952863495834585034, guid: 47906c4776163494187bb1d1c74b96b0, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5952863495834585034, guid: 47906c4776163494187bb1d1c74b96b0, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5952863495834585034, guid: 47906c4776163494187bb1d1c74b96b0, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -283,8 +270,19 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 47906c4776163494187bb1d1c74b96b0, type: 3}
---- !u!4 &2734917332797224658 stripped
+--- !u!4 &716102593907336477 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5952863495834585034, guid: 47906c4776163494187bb1d1c74b96b0, type: 3}
-  m_PrefabInstance: {fileID: 8604321829407142168}
+  m_PrefabInstance: {fileID: 6587862785068720855}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &4900504095553817586 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2264990441124161829, guid: 47906c4776163494187bb1d1c74b96b0, type: 3}
+  m_PrefabInstance: {fileID: 6587862785068720855}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 756228b45b245734f8dc369ab805bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BallCombatStatUI

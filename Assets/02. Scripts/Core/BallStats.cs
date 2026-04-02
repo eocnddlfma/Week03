@@ -3,31 +3,31 @@ using UnityEngine;
 [System.Serializable]
 public class BallStats
 {
-    public const float DefaultMinValue = 5f;
-    public const float DefaultMaxValue = 30f;
+    public const float DefaultMinValue = 1f;
+    public const float DefaultMaxValue = 1f;
 
     [Header("크기 (성장 불가 - 감정으로만 변동)")]
     public float Size = 1f;
 
     [Header("스탯 값")]
-    public float Attack   = 10f;
-    public float Defense  = 10f;
-    public float MaxHP    = 10f;
-    public float Speed    = 10f;
-    public float Evasion  = 10f;
-    public float Accuracy = 10f;
-    public float Critical = 10f;
-    public float Heal     = 10f;
+    public float Attack   = 1f;
+    public float Defense  = 1f;
+    public float MaxHP    = 5f;
+    public float Speed    = 1f;
+    public float Evasion  = 1f;
+    public float Accuracy = 1f;
+    public float Critical = 1f;
+    public float Heal     = 0f;
 
-    [Header("스탯 최대치 (게이지 기준)")]
-    public float AttackMax   = 100f;
-    public float DefenseMax  = 100f;
-    public float MaxHPMax    = 1000f;
-    public float SpeedMax    = 100f;
-    public float EvasionMax  = 500f;
-    public float AccuracyMax = 500f;
-    public float CriticalMax = 100f;
-    public float HealMax     = 100f;
+    // 스탯 최대치 - 모든 공 동일 고정값 (게이지 기준)
+    public const float AttackMax   = 500f;
+    public const float DefenseMax  = 500f;
+    public const float MaxHPMax    = 50000f;
+    public const float SpeedMax    = 520f;
+    public const float EvasionMax  = 520f;
+    public const float AccuracyMax = 520f;
+    public const float CriticalMax = 520f;
+    public const float HealMax     = 500f;
 
     public float Get(StatType type) => type switch
     {
@@ -73,14 +73,14 @@ public class BallStats
     public BallStats Clone() => new BallStats
     {
         Size     = Size,
-        Attack   = Attack,   AttackMax   = AttackMax,
-        Defense  = Defense,  DefenseMax  = DefenseMax,
-        MaxHP    = MaxHP,    MaxHPMax    = MaxHPMax,
-        Speed    = Speed,    SpeedMax    = SpeedMax,
-        Evasion  = Evasion,  EvasionMax  = EvasionMax,
-        Accuracy = Accuracy, AccuracyMax = AccuracyMax,
-        Critical = Critical, CriticalMax = CriticalMax,
-        Heal     = Heal,     HealMax     = HealMax,
+        Attack   = Attack,
+        Defense  = Defense,
+        MaxHP    = MaxHP,
+        Speed    = Speed,
+        Evasion  = Evasion,
+        Accuracy = Accuracy,
+        Critical = Critical,
+        Heal     = Heal,
     };
 
     public float GetTotalStats() =>
@@ -89,26 +89,28 @@ public class BallStats
     // 각 스탯을 minValue~maxValue 범위에서 랜덤 생성 (크기는 스탯 합산으로 결정)
     public void Randomize(float minValue, float maxValue)
     {
-        Attack   = Random.Range(Mathf.RoundToInt(minValue), Mathf.RoundToInt(maxValue) + 1);
-        Defense  = Random.Range(Mathf.RoundToInt(minValue), Mathf.RoundToInt(maxValue) + 1);
-        MaxHP    = Random.Range(Mathf.RoundToInt(minValue), Mathf.RoundToInt(maxValue) + 1);
-        Speed    = Random.Range(Mathf.RoundToInt(minValue), Mathf.RoundToInt(maxValue) + 1);
-        Evasion  = Random.Range(Mathf.RoundToInt(minValue), Mathf.RoundToInt(maxValue) + 1);
-        Accuracy = Random.Range(Mathf.RoundToInt(minValue), Mathf.RoundToInt(maxValue) + 1);
-        Critical = Random.Range(Mathf.RoundToInt(minValue), Mathf.RoundToInt(maxValue) + 1);
-        Heal     = Random.Range(Mathf.RoundToInt(minValue), Mathf.RoundToInt(maxValue) + 1);
+        int min = Mathf.RoundToInt(minValue);
+        int max = Mathf.RoundToInt(maxValue) + 1;
+        Attack   = Random.Range(min, max);
+        Defense  = Random.Range(min, max);
+        Speed    = Random.Range(min, max);
+        Evasion  = Random.Range(min, max);
+        Accuracy = Random.Range(min, max);
+        Critical = Random.Range(min, max);
+        Heal     = Random.Range(min, max);
+        MaxHP    = 5f;
     }
 
     public void CopyFrom(BallStats other)
     {
         Size     = other.Size;
-        Attack   = other.Attack;   AttackMax   = other.AttackMax;
-        Defense  = other.Defense;  DefenseMax  = other.DefenseMax;
-        MaxHP    = other.MaxHP;    MaxHPMax    = other.MaxHPMax;
-        Speed    = other.Speed;    SpeedMax    = other.SpeedMax;
-        Evasion  = other.Evasion;  EvasionMax  = other.EvasionMax;
-        Accuracy = other.Accuracy; AccuracyMax = other.AccuracyMax;
-        Critical = other.Critical; CriticalMax = other.CriticalMax;
-        Heal     = other.Heal;     HealMax     = other.HealMax;
+        Attack   = other.Attack;
+        Defense  = other.Defense;
+        MaxHP    = other.MaxHP;
+        Speed    = other.Speed;
+        Evasion  = other.Evasion;
+        Accuracy = other.Accuracy;
+        Critical = other.Critical;
+        Heal     = other.Heal;
     }
 }

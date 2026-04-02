@@ -8,7 +8,7 @@ PhysicsMaterial2D:
   m_PrefabAsset: {fileID: 0}
   m_Name: BilliardBallPhysicMat2D
   serializedVersion: 2
-  friction: 0.1
-  bounciness: 0.95
+  friction: 0.05
+  bounciness: 0.98
   m_FrictionCombine: 4
   m_BounceCombine: 4

@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: ca6fd005dfd52a949ad3cdf665602bfd
+guid: 281edf5cd9febbb43b6097e95dbfe499
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 6611018122154785788
-    second: Generated Image March 28, 2026 - 10_05PM_0
+      213: -5681914236616975626
+    second: Generated Image March 29, 2026 - 9_54PM (1)_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -37,7 +37,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 2
+    filterMode: 1
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -75,7 +75,7 @@ TextureImporter:
     maxTextureSize: 4096
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 2
+    textureCompression: 1
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -113,7 +113,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Generated Image March 28, 2026 - 10_05PM_0
+      name: Generated Image March 29, 2026 - 9_54PM (1)_0
       rect:
         serializedVersion: 2
         x: 0
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: cfbb4b694fd0fbb50800000000000000
-      internalID: 6611018122154785788
+      spriteID: 6fad53a1b19c521b0800000000000000
+      internalID: -5681914236616975626
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Generated Image March 28, 2026 - 10_05PM_0: 6611018122154785788
+      Generated Image March 29, 2026 - 9_54PM (1)_0: -5681914236616975626
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -6,11 +6,15 @@ public class DialogueSystem : MonoBehaviour
     public static DialogueSystem Instance { get; private set; }
 
     [SerializeField] private DialogueDatabase database;
+    // getter 추가
+    public DialogueDatabase Database => database; 
     [SerializeField] private float            zoomSize       = 3f;  // 줌인 시 ortho size
     [SerializeField] private float            zoomSmoothTime = 0.4f; // 줌 속도
 
     private Coroutine highlightCoroutine;
     private bool      _skipRequested;
+
+    public static event System.Action OnDialogueFinished;
 
     void Awake()
     {
@@ -39,24 +43,44 @@ public class DialogueSystem : MonoBehaviour
         }
     }
 
-    public void TriggerDialogue(BilliardBall mostActiveBall)
+    // 충돌 횟수 미달 시 Any 대사 출력 (focusBall은 줌인 대상)
+    public bool TriggerAnyDialogue(BilliardBall focusBall)
+    {
+        if (database == null) return false;
+
+        var (text, _, emotionUsed) = DialogueSelector.SelectAny(database);
+        if (!string.IsNullOrEmpty(text))
+        {
+            _skipRequested = false;
+            DialogueUI.Instance.Show(focusBall.MemoryName, text, emotionUsed);
+
+            if (highlightCoroutine != null) StopCoroutine(highlightCoroutine);
+            highlightCoroutine = StartCoroutine(ZoomOnBall(focusBall));
+            return true;
+        }
+        return false;
+    }
+
+    public bool TriggerDialogue(BilliardBall mostActiveBall)
     {
         if (database == null)
         {
             Debug.LogWarning("[DialogueSystem] DialogueDatabase가 연결되지 않았습니다.");
-            return;
+            return false;
         }
 
-        var (text, displayName) = DialogueSelector.Select(database, mostActiveBall);
+        var (text, displayName, emotionUsed) = DialogueSelector.Select(database, mostActiveBall);
         if (!string.IsNullOrEmpty(text))
         {
             string shownName = string.IsNullOrEmpty(displayName) ? mostActiveBall.MemoryName : displayName;
             _skipRequested = false;
-            DialogueUI.Instance.Show(shownName, text, mostActiveBall.WaveStartEmotionType);
+            DialogueUI.Instance.Show(shownName, text, emotionUsed);
 
             if (highlightCoroutine != null) StopCoroutine(highlightCoroutine);
             highlightCoroutine = StartCoroutine(ZoomOnBall(mostActiveBall));
+            return true;
         }
+        return false;
     }
 
     private IEnumerator ZoomOnBall(BilliardBall ball)
@@ -123,5 +147,6 @@ public class DialogueSystem : MonoBehaviour
 
         highlightCoroutine = null;
         if (boundary != null) boundary.SuppressCamera = false;
+        OnDialogueFinished?.Invoke();
     }
 }

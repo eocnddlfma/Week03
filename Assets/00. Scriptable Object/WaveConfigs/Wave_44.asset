@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37fcf1887d88f2d4cb5336c3ce6cca51, type: 3}
+  m_Name: Wave_44
+  m_EditorClassIdentifier: Assembly-CSharp::WaveConfigSO
+  spawnEnemies: 1
+  defaultStats:
+    Size: 1
+    Attack: 1
+    Defense: 1
+    MaxHP: 5
+    Speed: 1
+    Evasion: 1
+    Accuracy: 1
+    Critical: 1
+    Heal: 0
+  bonusMinBallCount: 7
+  statBonusPerBall: 1
+  enemies:
+  - emotionType: 3
+    useFixedStats: 1
+    stats:
+      Size: 1
+      Attack: 500
+      Defense: 500
+      MaxHP: 50000
+      Speed: 550
+      Evasion: 550
+      Accuracy: 550
+      Critical: 550
+      Heal: 550

@@ -5,8 +5,6 @@ using System.Collections.Generic;
 // 어둠: "20살 1~11월의 기억" (11종) — GRAY/BLACK/DEEPBLACK 전용
 public static class BallMemoryNameGenerator
 {
-    private static readonly string[] Seasons = { "봄", "여름", "가을", "겨울" };
-
     private static List<string> pool;
     private static int          index;
 
@@ -31,9 +29,8 @@ public static class BallMemoryNameGenerator
     private static void BuildPool()
     {
         pool = new List<string>(64);
-        for (int age = 5; age <= 20; age++)
-            foreach (var season in Seasons)
-                pool.Add($"{age}살 {season}의 기억");
+        for (int age = 5; age <= 19; age++)
+            pool.Add($"{age}살의 기억");
 
         Shuffle(pool);
         index = 0;
@@ -56,5 +53,19 @@ public static class BallMemoryNameGenerator
             int j = UnityEngine.Random.Range(0, i + 1);
             (list[i], list[j]) = (list[j], list[i]);
         }
+    }
+
+    public static string GetNameByAge(int age)
+    {
+        if (age == -1) return "잊혀진 기억"; // 예외 처리
+        return $"{age}살의 기억";
+    }
+
+    public static string NextDark(ColorType color)
+    {
+        // 20살 고정, 월은 랜덤 혹은 순차
+        if (darkPool == null || darkIndex >= darkPool.Count)
+            BuildDarkPool();
+        return darkPool[darkIndex++];
     }
 }

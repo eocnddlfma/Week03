@@ -15,20 +15,26 @@ MonoBehaviour:
   spawnEnemies: 0
   defaultStats:
     Size: 1
-    Attack: 10
-    Defense: 10
-    MaxHP: 10
-    Speed: 10
-    Evasion: 10
-    Accuracy: 10
-    Critical: 10
-    Heal: 10
-    AttackMax: 100
-    DefenseMax: 100
-    MaxHPMax: 1000
-    SpeedMax: 100
-    EvasionMax: 500
-    AccuracyMax: 500
-    CriticalMax: 100
-    HealMax: 100
-  enemies: []
+    Attack: 1
+    Defense: 1
+    MaxHP: 5
+    Speed: 1
+    Evasion: 1
+    Accuracy: 1
+    Critical: 1
+    Heal: 0
+  bonusMinBallCount: 4
+  statBonusPerBall: 1
+  enemies:
+  - emotionType: 1
+    useFixedStats: 1
+    stats:
+      Size: 1
+      Attack: 4
+      Defense: 44
+      MaxHP: 5000
+      Speed: 40
+      Evasion: 40
+      Accuracy: 40
+      Critical: 40
+      Heal: 0

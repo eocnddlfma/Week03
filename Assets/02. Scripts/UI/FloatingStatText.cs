@@ -5,8 +5,9 @@ using TMPro;
 [RequireComponent(typeof(TextMeshPro))]
 public class FloatingStatText : MonoBehaviour
 {
-    [SerializeField] private float duration   = 1.2f;
-    [SerializeField] private float riseSpeed  = 1.5f;
+    [SerializeField] private float duration        = 1.2f;
+    [SerializeField] private float riseSpeed       = 1.5f;
+    [SerializeField] private float referenceOrtho  = 10f; // 이 orthoSize일 때 기본 크기
 
     private TextMeshPro tmp;
     private float       elapsed;
@@ -17,10 +18,16 @@ public class FloatingStatText : MonoBehaviour
     public void Play(string text, Color color, Vector2 worldPos)
     {
         transform.position = worldPos;
-        tmp.text           = text;
-        baseColor          = color;
-        tmp.color          = color;
-        elapsed            = 0f;
+
+        // 카메라 orthoSize에 비례해 스케일 조정
+        float ortho = Camera.main != null ? Camera.main.orthographicSize : referenceOrtho;
+        float scale = ortho / referenceOrtho;
+        transform.localScale = Vector3.one * scale;
+
+        tmp.text  = text;
+        baseColor = color;
+        tmp.color = color;
+        elapsed   = 0f;
         gameObject.SetActive(true);
     }
 

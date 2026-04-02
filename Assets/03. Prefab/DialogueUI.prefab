@@ -564,8 +564,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: 200, y: 0}
-  m_SizeDelta: {x: -400, y: 400}
+  m_AnchoredPosition: {x: 50, y: 0}
+  m_SizeDelta: {x: -700.00024, y: 400}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!222 &7906864395305931299
 CanvasRenderer:
@@ -677,4 +677,6 @@ MonoBehaviour:
   - emotion: 8
     sprite: {fileID: 21300000, guid: 34c7594faa4f54541a007d09d03bbd80, type: 3}
   - emotion: 9
-    sprite: {fileID: 21300000, guid: ca6fd005dfd52a949ad3cdf665602bfd, type: 3}
+    sprite: {fileID: 21300000, guid: 281edf5cd9febbb43b6097e95dbfe499, type: 3}
+  - emotion: -1
+    sprite: {fileID: 21300000, guid: c5f169eedc97c3f4ca02be4509db1234, type: 3}

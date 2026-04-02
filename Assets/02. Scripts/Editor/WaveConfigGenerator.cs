@@ -5,14 +5,12 @@ using UnityEngine;
 
 public static class WaveConfigGenerator
 {
-    private const string SaveDir  = "Assets/00. Scriptable Object/WaveConfigs";
-    private const int    MaxWave  = 40; // 생성할 최대 웨이브 수
+    private const string SaveDir      = "Assets/00. Scriptable Object/WaveConfigs";
+    private const int    MaxWave      = 44; // 11번 조우 × 4웨이브 간격
+    private const int    SpawnInterval = 4; // 적 등장 간격
 
-    // ── 소수 판별 ──────────────────────────────────────────────────
-    // 소수 웨이브에만 적 등장 (2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, ...)
-    // 총 11번 조우: gray×5 → black×5 → deepblack×1
-    // 적 수 패턴: 1,2,3,4,5,1,2,3,4,5,1
-    // 이후 소수 웨이브는 spawnEnemies = false
+    // 4웨이브마다 적 등장, 총 11번 조우: gray×5 → black×5 → deepblack×1
+    // 적 수: 조우마다 0.5씩 증가 (1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6)
 
     [MenuItem("Tools/WaveConfig/Generate Wave Configs")]
     public static void Generate()
@@ -34,15 +32,15 @@ public static class WaveConfigGenerator
         for (int wave = 1; wave <= MaxWave; wave++)
         {
             var so           = ScriptableObject.CreateInstance<WaveConfigSO>();
-            bool isEnemyWave = IsPrime(wave) && encounterIdx < 11;
+            bool isEnemyWave = (wave % SpawnInterval == 0) && encounterIdx < 11;
 
             so.spawnEnemies = isEnemyWave;
             so.enemies      = new List<EnemyEntry>();
 
             if (isEnemyWave)
             {
-                int              count = (encounterIdx % 5) + 1; // 1→2→3→4→5 반복
                 EnemyEmotionType type  = GetEmotionType(encounterIdx);
+                int              count = (type == EnemyEmotionType.DeepBlack) ? 1 : (encounterIdx % 2 == 0) ? 1 : 2;
 
                 for (int i = 0; i < count; i++)
                     so.enemies.Add(new EnemyEntry { emotionType = type, useFixedStats = false });
@@ -73,15 +71,6 @@ public static class WaveConfigGenerator
         Debug.Log($"[WaveConfigGenerator] Wave 1~{MaxWave} 생성 완료 " +
                   $"| 적 등장 웨이브: {Mathf.Min(encounterIdx, 11)}회 " +
                   $"| 저장: {SaveDir}");
-    }
-
-    // ── 소수 판별 ──────────────────────────────────────────────────
-    private static bool IsPrime(int n)
-    {
-        if (n < 2) return false;
-        for (int i = 2; i * i <= n; i++)
-            if (n % i == 0) return false;
-        return true;
     }
 
     // ── 조우 순번 → 감정 타입 ──────────────────────────────────────

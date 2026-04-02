@@ -25,6 +25,12 @@ public class WaveConfigSO : ScriptableObject
     [Tooltip("개별 스탯을 지정하지 않은 적에게 적용되는 기본 스탯")]
     public BallStats defaultStats = new BallStats();
 
+    [Header("스탯 스케일링")]
+    [Tooltip("이 수 이상의 공이 있을 때만 보너스 적용")]
+    public int   bonusMinBallCount  = 4;
+    [Tooltip("기준 초과 공 1개당 적 스탯에 더해지는 보너스")]
+    public float statBonusPerBall   = 1f;
+
     [Tooltip("스폰할 적 목록 (순서대로 생성)")]
     public List<EnemyEntry> enemies = new List<EnemyEntry>
     {

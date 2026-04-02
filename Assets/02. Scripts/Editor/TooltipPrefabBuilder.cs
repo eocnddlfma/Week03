@@ -6,22 +6,27 @@ using UnityEditor;
 public class TooltipPrefabBuilder : EditorWindow
 {
     // ── 크기 설정 ─────────────────────────────────────────────────
-    private const float BarWidth     = 150f;
-    private const float BarHeight    = 26f;
-    private const float LabelWidth   = 58f;
-    private const float InfoFontSize = 22f;
-    private const float BarFontSize  = 15f;
+    private const float BarWidth     = 220f;
+    private const float BarHeight    = 28f;
+    private const float LabelWidth   = 80f;
+    private const float InfoFontSize = 26f;
+    private const float BarFontSize  = 18f;
+    // 정보 섹션 최소 너비 (스탯 바 행 너비에 맞춤)
+    private const float InfoMinWidth = BarWidth + LabelWidth + 36f;
 
+    // 색상: 각 스탯을 부여하는 공의 색과 일치
+    // Attack=Red / Defense=Blue / HP=Green / Speed=Yellow
+    // Evasion=White / Accuracy=Magenta / Critical=Cyan / Heal=White
     private static readonly (string name, Color bright)[] StatDefs =
     {
-        ("공격력", new Color(1f,   0.3f, 0.3f)),
-        ("방어력", new Color(0.3f, 0.5f, 1f  )),
-        ("체력",   new Color(0.2f, 0.8f, 0.3f)),
-        ("속도",   new Color(1f,   0.9f, 0.2f)),
-        ("회피",   new Color(0.3f, 0.9f, 0.9f)),
-        ("명중률", new Color(0.9f, 0.9f, 0.9f)),
-        ("치명",   new Color(1f,   0.6f, 0.1f)),
-        ("힐",     new Color(0.4f, 1f,   0.6f)),
+        ("공격력", new Color(1f,    0.25f, 0.25f)),  // Red
+        ("방어력", new Color(0.25f, 0.45f, 1f   )),  // Blue
+        ("체력",   new Color(0.2f,  0.85f, 0.2f )),  // Green
+        ("속도",   new Color(1f,    1f,    0.2f  )),  // Yellow
+        ("회피",   new Color(0.85f, 0.85f, 0.85f)),  // White
+        ("명중률", new Color(1f,    0.25f, 1f    )),  // Magenta
+        ("치명",   new Color(0.2f,  1f,    1f    )),  // Cyan
+        ("힐",     new Color(0.75f, 1f,    0.8f  )),  // White (연두 계열로 구분)
     };
 
     private TMP_FontAsset font;
@@ -87,6 +92,8 @@ public class TooltipPrefabBuilder : EditorWindow
 
         // 정보 그룹
         var infoGroup      = CreateVertGroup("InfoGroup",      panel.transform, 2f);
+        var infoLE = infoGroup.AddComponent<LayoutElement>();
+        infoLE.minWidth = InfoMinWidth;
         var nameTmp        = CreateTMP("NameText",       infoGroup.transform, InfoFontSize + 2f, font);
         nameTmp.fontStyle  = FontStyles.Bold;
         var passionTmp     = CreateTMP("PassionText",    infoGroup.transform, InfoFontSize - 2f, font);
